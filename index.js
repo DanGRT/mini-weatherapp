@@ -5,6 +5,8 @@ const thumbsEle=document.querySelector(".thumbs");
 const displayPhoto=document.querySelector(".photo");
 const infoName = document.querySelector("#credit-user");
 const infoLink = document.querySelector("#credit-platform");
+const bodyElement = document.querySelector("body")
+const searchBox = document.querySelector(".search__input")
 
 function getCityURL(city){
   return `http://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=f00c57f47d08f6f24f76c9cd35a3fb1c`
@@ -39,12 +41,16 @@ function fetchWeatherPicture(url){
     infoName.textContent = bigPic.dataset.photographer
     infoLink.setAttribute("href", bigPic.dataset.profileLink)
     displayPhoto.appendChild(bigPic)
-    body.results.forEach(item =>{
+    body.results.forEach((item, index) =>{
+      const smallPicContainer = document.createElement("a")
       let smallPic=document.createElement("img");
+      smallPic.id = `thumbnail${index}`
       smallPic.src=item.urls.thumb;
       smallPic.dataset.photographer = item.user.name
       smallPic.dataset.profileLink = item.user.links.html
-      smallPic.className = "thumbnail"
+      smallPic.className = "thumb"
+      smallPicContainer.className = "thumbs__link"
+      smallPicContainer.appendChild(smallPic)
       smallPic.addEventListener("click", event => {
         displayPhoto.childNodes[0].src = item.urls.regular
         displayPhoto.childNodes[0].dataset.photographer = item.user.name
@@ -52,15 +58,16 @@ function fetchWeatherPicture(url){
         infoName.textContent = smallPic.dataset.photographer
         infoLink.setAttribute("href", smallPic.dataset.profileLink)
 
+
+
       })
-      thumbsEle.appendChild(smallPic);
+      thumbsEle.appendChild(smallPicContainer);
     })
 
   })
 }
 
-const bodyElement = document.querySelector("body")
-const searchBox = document.querySelector(".search__input")
+
 
 bodyElement.addEventListener("submit", event => {
   event.preventDefault()
@@ -68,6 +75,18 @@ bodyElement.addEventListener("submit", event => {
   displayPhoto.innerHTML = ""
   fetchWeatherDescription(getCityURL(searchBox.value))
 
+})
+
+
+
+bodyElement.addEventListener("click", event => {
+  if (event.target.matches(".thumb")){
+    const allThumbs = document.querySelectorAll(".thumb")
+    allThumbs.forEach(thumb => {
+      thumb.className = "thumb"
+    })
+    event.target.classList.toggle("active")
+  }
 })
 
 
