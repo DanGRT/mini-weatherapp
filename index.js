@@ -48,22 +48,12 @@ function fetchWeatherPicture(url){
       smallPic.src=item.urls.thumb;
       smallPic.dataset.photographer = item.user.name
       smallPic.dataset.profileLink = item.user.links.html
+      smallPic.dataset.regularPic = item.urls.regular
       smallPic.className = "thumb"
       smallPicContainer.className = "thumbs__link"
       smallPicContainer.appendChild(smallPic)
-      smallPic.addEventListener("click", event => {
-        displayPhoto.childNodes[0].src = item.urls.regular
-        displayPhoto.childNodes[0].dataset.photographer = item.user.name
-        displayPhoto.childNodes[0].dataset.profileLink = item.user.links.html
-        infoName.textContent = smallPic.dataset.photographer
-        infoLink.setAttribute("href", smallPic.dataset.profileLink)
-
-
-
-      })
       thumbsEle.appendChild(smallPicContainer);
     })
-
   })
 }
 
@@ -86,6 +76,11 @@ bodyElement.addEventListener("click", event => {
       thumb.className = "thumb"
     })
     event.target.classList.toggle("active")
+    displayPhoto.childNodes[0].src = event.target.dataset.regularPic
+    displayPhoto.childNodes[0].dataset.photographer = event.target.dataset.photographer
+    displayPhoto.childNodes[0].dataset.profileLink = event.target.dataset.profileLink
+    infoName.textContent = event.target.dataset.photographer
+    infoLink.setAttribute("href", event.target.dataset.profileLink)
   }
 })
 
