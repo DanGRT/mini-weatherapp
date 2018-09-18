@@ -1,0 +1,59 @@
+//OpenWeatherAPI key: f00c57f47d08f6f24f76c9cd35a3fb1c
+//unsplash API key: 233c522c9aa5098a5e08dae45ba3d60a6146624ee96b5a71a364e408bacd2b10
+
+const thumbsEle=document.querySelector(".thumbs");
+const displayPhoto=document.querySelector(".photo");
+
+function getCityURL(city){
+  return `http://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=f00c57f47d08f6f24f76c9cd35a3fb1c`
+}
+
+function fetchWeatherDescription(url){
+  fetch(url)
+    .then(response => response.json())
+    .then(body => {
+      console.log(body.weather[0].description)
+      const picURL = getPictureURL(body.weather[0].description)
+      fetchWeatherPicture(picURL)
+
+    })
+
+}
+
+function getPictureURL(description){
+  return `https://api.unsplash.com/search/photos?page=1&query=${description}&client_id=233c522c9aa5098a5e08dae45ba3d60a6146624ee96b5a71a364e408bacd2b10`
+}
+
+function fetchWeatherPicture(url){
+  fetch(url)
+  .then(response => response.json())
+  .then(body =>{
+    let bigPic=document.createElement("img");
+    bigPic.src = body.results[0].urls.regular
+    displayPhoto.appendChild(bigPic)
+    body.results.forEach(item =>{
+      let smallPic=document.createElement("img");
+      smallPic.src=item.urls.thumb;
+      smallPic.className = "thumbnail"
+      smallPic.addEventListener("click", event => {
+        displayPhoto.childNodes[0].src = item.urls.regular
+      })
+      thumbsEle.appendChild(smallPic);
+    })
+
+  })
+}
+
+const bodyElement = document.querySelector("body")
+const searchBox = document.querySelector(".search__input")
+
+bodyElement.addEventListener("submit", event => {
+  event.preventDefault()
+  thumbsEle.innerHTML = ""
+  displayPhoto.innerHTML = ""
+  fetchWeatherDescription(getCityURL(searchBox.value))
+
+})
+
+
+fetchWeatherDescription(getCityURL("london"))
