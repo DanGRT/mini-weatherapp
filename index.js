@@ -3,6 +3,8 @@
 
 const thumbsEle=document.querySelector(".thumbs");
 const displayPhoto=document.querySelector(".photo");
+const infoName = document.querySelector("#credit-user");
+const infoLink = document.querySelector("#credit-platform");
 
 function getCityURL(city){
   return `http://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=f00c57f47d08f6f24f76c9cd35a3fb1c`
@@ -28,15 +30,28 @@ function fetchWeatherPicture(url){
   fetch(url)
   .then(response => response.json())
   .then(body =>{
+    console.log(body)
+    console.log(body.results[0].user.name)
     let bigPic=document.createElement("img");
     bigPic.src = body.results[0].urls.regular
+    bigPic.dataset.photographer = body.results[0].user.name
+    bigPic.dataset.profileLink = body.results[0].user.links.html
+    infoName.textContent = bigPic.dataset.photographer
+    infoLink.setAttribute("href", bigPic.dataset.profileLink)
     displayPhoto.appendChild(bigPic)
     body.results.forEach(item =>{
       let smallPic=document.createElement("img");
       smallPic.src=item.urls.thumb;
+      smallPic.dataset.photographer = item.user.name
+      smallPic.dataset.profileLink = item.user.links.html
       smallPic.className = "thumbnail"
       smallPic.addEventListener("click", event => {
         displayPhoto.childNodes[0].src = item.urls.regular
+        displayPhoto.childNodes[0].dataset.photographer = item.user.name
+        displayPhoto.childNodes[0].dataset.profileLink = item.user.links.html
+        infoName.textContent = smallPic.dataset.photographer
+        infoLink.setAttribute("href", smallPic.dataset.profileLink)
+
       })
       thumbsEle.appendChild(smallPic);
     })
